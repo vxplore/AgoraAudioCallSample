@@ -1,9 +1,10 @@
 package com.vxplore.agoraaudiocall.di
 
-import android.app.Application
+import android.content.Context
 import com.hellomydoc.videocall.navigation.MyRouteNavigator
 import com.hellomydoc.videocall.navigation.RouteNavigator
 import com.vxplore.agoraaudiocall.*
+import com.vxplore.agoraaudiocall.tokener.StaticTokenerImpl
 import com.vxplore.agoraaudiocall.tokener.Tokener
 import com.vxplore.agoraaudiocall.tokener.TokenerImpl
 import dagger.Module
@@ -24,9 +25,9 @@ object AppModule {
         return CredentialMockImpl()
     }
 
-    @Singleton
     @Provides
-    fun provideMetar(@ApplicationContext application: Application): Metar {
+    @Singleton
+    fun provideMetar(@ApplicationContext application: Context): Metar {
         return MetarImpl(application)
     }
 
@@ -37,18 +38,10 @@ object AppModule {
 
     @Provides
     fun provideTokener(credential: Credential, tokenBuilder: TokenBuilder): Tokener {
-        return TokenerImpl(credential, tokenBuilder)
+        return /*Static*/TokenerImpl(credential, tokenBuilder)
     }
 
-    /*@Provides
-    @Singleton
-    fun provideAgoraAudioCall(
-        credential: Credential,
-        tokener: Tokener,
-        @ApplicationContext application: Application
-    ): AgoraAudioCall {
-        return AgoraAudioCallImpl(credential,tokener,application)
-    }*/
+
 }
 
 @Module
@@ -58,4 +51,14 @@ class ViewModelModule {
     @Provides
     @ViewModelScoped
     fun bindRouteNavigator(): RouteNavigator = MyRouteNavigator()
+
+    @Provides
+    @ViewModelScoped
+    fun provideAgoraAudioCall(
+        credential: Credential,
+        tokener: Tokener,
+        @ApplicationContext application: Context
+    ): AgoraAudioCall {
+        return AgoraAudioCallImpl(credential,tokener,application)
+    }
 }

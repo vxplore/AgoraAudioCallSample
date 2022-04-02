@@ -1,9 +1,11 @@
 package com.vxplore.agoraaudiocall.tokener
 
+import com.vxplore.agoraaudiocall.Credential
+import com.vxplore.agoraaudiocall.TokenBuilder
 import com.vxplore.agoraaudiocall.tokener.Tokener
 
-class StaticTokenerImpl: Tokener {
+class StaticTokenerImpl(credential: Credential, tokenBuilder: TokenBuilder) : Tokener {
     override suspend fun new(): String {
-        return "0061d4da708a96c43999be400b49d04c172IAB0Goyzo1cIwZSXfFsSAt5+MIe+8JeL8lzsX2s5MV3Ewu6WhZ8AAAAAEAAJmhJvAgVEYgEAAQACBURi"
+        return "00613622905826d46538beb9bd1d96c83b1IADLjTMOaOqkNsuH2c3M3/ac1D0TjIMYGOrvl/seQ8VY1tm4ZkoAAAAAEABrDG+dZ3tJYgEAAQBne0li"
     }
 }

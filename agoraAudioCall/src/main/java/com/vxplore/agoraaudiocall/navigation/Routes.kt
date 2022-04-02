@@ -1,6 +1,6 @@
-package com.hellomydoc.videocall.navigation
+package com.vxplore.agoraaudiocall.navigation
 
 object Routes {
-    const val Video = "video/{channelId}/{userId}/{peerId}"
+    const val Audio = "audio/"
     const val Home = "details/"
 }

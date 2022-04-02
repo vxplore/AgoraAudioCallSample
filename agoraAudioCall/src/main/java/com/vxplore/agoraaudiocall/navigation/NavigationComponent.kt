@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.vxplore.agoraaudiocall.VideoRoute
+import com.vxplore.agoraaudiocall.AudioRoute
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -16,10 +16,10 @@ fun NavigationComponent(
 ) {
     AnimatedNavHost(
         navController = navHostController,
-        startDestination = VideoRoute.route,
+        startDestination = AudioRoute.route,
         modifier = Modifier/*.padding(paddingValues)*/
     ) {
-        VideoRoute.composable(this, navHostController, data)
+        AudioRoute.composable(this, navHostController, data)
         /*ChatRoute.composable(
             this, navHostController
         )*/

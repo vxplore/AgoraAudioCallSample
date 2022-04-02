@@ -19,5 +19,17 @@ class CallBox {
             this.channelId = channelId
             activity.startActivity(Intent(activity,VoiceCallActivity::class.java))
         }
+
+        fun getUserId(): String {
+            return this.userId
+        }
+
+        fun getPeerId(): String {
+            return this.peerId
+        }
+
+        fun getChannelId(): String {
+            return this.channelId
+        }
     }
 }

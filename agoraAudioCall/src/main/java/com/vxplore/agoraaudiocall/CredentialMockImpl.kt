@@ -2,14 +2,23 @@ package com.vxplore.agoraaudiocall
 
 import com.vxplore.agoraaudiocall.model.AgoraAppCredential
 import com.vxplore.agoraaudiocall.model.MeetTimings
+import javax.security.auth.callback.Callback
 
 class CredentialMockImpl: Credential {
 
     override val userUid: Int
-        get() = TODO("Not yet implemented")
+        get(){
+            val userId = CallBox.getUserId()
+            val peerId = CallBox.getPeerId()
+            return if(userId>peerId){
+                2
+            } else{
+                1
+            }
+        }
 
     override suspend fun getChannelId(): String {
-        return "AudioCall"
+        return CallBox.getChannelId()
     }
 
     override suspend fun meetTimings(): MeetTimings {
