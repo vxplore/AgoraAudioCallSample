@@ -1,7 +1,7 @@
 package com.vxplore.agoraaudiocall.tokener.rtm;
 
 
-import com.hellomydoc.videocall.tokener.media.AccessToken;
+import com.vxplore.agoraaudiocall.tokener.media.AccessToken;
 
 public class RtmTokenBuilder {
     public enum Role {

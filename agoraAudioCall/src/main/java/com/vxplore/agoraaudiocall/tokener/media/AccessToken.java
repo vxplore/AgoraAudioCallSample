@@ -1,7 +1,7 @@
 package com.vxplore.agoraaudiocall.tokener.media;
 
 
-import static com.hellomydoc.videocall.tokener.media.Utils.crc32;
+import static com.vxplore.agoraaudiocall.tokener.media.Utils.crc32;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -8,6 +8,9 @@
             android:exported="false"
             android:label="@string/title_activity_voice_call"
             android:theme="@style/Theme.AgoraAudioCallSample" />
+        <meta-data
+            android:name="jkl"
+            android:value="123"
+            />
     </application>
-
 </manifest>

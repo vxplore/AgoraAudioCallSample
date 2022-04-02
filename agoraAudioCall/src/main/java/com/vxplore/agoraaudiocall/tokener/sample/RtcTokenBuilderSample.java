@@ -1,7 +1,6 @@
 package com.vxplore.agoraaudiocall.tokener.sample;
 
-
-import com.hellomydoc.videocall.tokener.media.RtcTokenBuilder;
+import com.vxplore.agoraaudiocall.tokener.media.RtcTokenBuilder;
 
 public class RtcTokenBuilderSample {
     static String appId = "970CA35de60c44645bbae8a215061b33";

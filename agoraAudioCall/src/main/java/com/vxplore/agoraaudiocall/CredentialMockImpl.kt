@@ -1,7 +1,28 @@
 package com.vxplore.agoraaudiocall
 
+import com.vxplore.agoraaudiocall.model.AgoraAppCredential
+import com.vxplore.agoraaudiocall.model.MeetTimings
+
 class CredentialMockImpl: Credential {
-    override suspend fun appId(): String {
-        return "13622905826d46538beb9bd1d96c83b1"
+
+    override val userUid: Int
+        get() = TODO("Not yet implemented")
+
+    override suspend fun getChannelId(): String {
+        return "AudioCall"
+    }
+
+    override suspend fun meetTimings(): MeetTimings {
+        return MeetTimings(
+            startTimeMillis = System.currentTimeMillis(),
+            timeSpanMillis = 15*60*100
+        )
+    }
+
+    override suspend fun getAgoraAppCredential(): AgoraAppCredential {
+        return AgoraAppCredential(
+            appId = "13622905826d46538beb9bd1d96c83b1",
+            appCertificate = "a7138949c72440cd81607fc3edcb3f01"
+        )
     }
 }

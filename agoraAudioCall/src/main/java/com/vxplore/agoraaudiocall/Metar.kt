@@ -1,5 +1,5 @@
 package com.vxplore.agoraaudiocall
 
 interface Metar {
-    fun get(key: String): String
+    operator fun get(key: String): String
 }

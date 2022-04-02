@@ -2,8 +2,7 @@ package com.vxplore.agoraaudiocall.tokener.sample;
 
 
 
-
-import com.hellomydoc.videocall.tokener.signal.SignalingToken;
+import com.vxplore.agoraaudiocall.tokener.signal.SignalingToken;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;

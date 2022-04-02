@@ -18,7 +18,9 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hellomydoc.videocall.navigation.NavigationComponent
 import com.vxplore.agoraaudiocall.ui.theme.AgoraAudioCallSampleTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class VoiceCallActivity : ComponentActivity() {
     private lateinit var navController: NavHostController
     @OptIn(ExperimentalAnimationApi::class)
