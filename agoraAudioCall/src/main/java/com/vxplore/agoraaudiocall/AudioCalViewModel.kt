@@ -2,13 +2,13 @@ package com.vxplore.agoraaudiocall
 
 import android.Manifest
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hellomydoc.videocall.navigation.RouteNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,6 +17,18 @@ class AudioCalViewModel @Inject constructor(
     private val routeNavigator: RouteNavigator,
     private val agoraAudioCall: AgoraAudioCall,
 ) : LifeCycleAwareDelegate, ViewModel(), RouteNavigator by routeNavigator {
+
+    private val _remoteAudio = mutableStateOf(true)
+    val remoteAudio: State<Boolean> = _remoteAudio
+
+    private val _bytes = mutableStateOf(byteArrayOf())
+    val bytes: State<ByteArray> = _bytes
+
+    private val _localAudioState = mutableStateOf(false)
+    val localAudioState: State<Boolean> = _localAudioState
+
+    private val _remoteAudioState = mutableStateOf(true)
+    val remoteAudioState: State<Boolean> = _remoteAudioState
 
     private val _elapsed = mutableStateOf(0)
     val elapsed: State<Int> = _elapsed
@@ -78,14 +90,32 @@ class AudioCalViewModel @Inject constructor(
                     _left.value = left
                     _total.value = totalAllowedSeconds
                 }
+
+                override fun onLocalAudioStateChanged(b: Boolean) {
+                    _localAudioState.value = b
+                }
+
+                override fun onTokenExpired() {
+                    callEnd()
+                }
+
+                override fun onSamples(arr: ByteArray) {
+                    this@AudioCalViewModel._bytes.value = arr
+                }
+
+                override fun onRemoteAudioMute(muted: Boolean) {
+                    _remoteAudio.value = !muted
+                }
             })
             agoraAudioCall.joinChannel()
         }
     }
 
     fun callEnd() {
-        agoraAudioCall.leaveChannel()
-        destroy()
+        viewModelScope.launch {
+            agoraAudioCall.leaveChannel()
+            destroy()
+        }
     }
 
     fun destroy(){
@@ -97,7 +127,12 @@ class AudioCalViewModel @Inject constructor(
         callEnd()
     }
 
-    fun callMuteLocal() {
-        agoraAudioCall.muteLocal(true)
+    fun callToggleLocal() {
+        agoraAudioCall.toggleLocal()
+    }
+
+    fun toggleRemoteAudio() {
+        _remoteAudioState.value = !_remoteAudioState.value
+        agoraAudioCall.enabledRemote(_remoteAudioState.value)
     }
 }

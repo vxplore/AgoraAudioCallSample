@@ -34,7 +34,7 @@ class CredentialMockImpl: Credential {
     override suspend fun meetTimings(): MeetTimings {
         return MeetTimings(
             startTimeMillis = System.currentTimeMillis(),
-            timeSpanMillis = 15*60*100
+            timeSpanMillis = 15*60*1000
         )
     }
 

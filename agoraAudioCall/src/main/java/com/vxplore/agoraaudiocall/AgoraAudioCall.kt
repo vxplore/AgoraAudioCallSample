@@ -9,5 +9,6 @@ interface AgoraAudioCall {
     fun destroy()
     fun mute(yes: Boolean)
     fun muteLocal(yes: Boolean)
-    fun muteRemote(yes: Boolean)
+    fun enabledRemote(yes: Boolean)
+    fun toggleLocal()
 }
