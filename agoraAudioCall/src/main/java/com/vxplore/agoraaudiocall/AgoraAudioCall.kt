@@ -3,8 +3,11 @@ package com.vxplore.agoraaudiocall
 import android.app.Application
 
 interface AgoraAudioCall {
-    suspend fun create(callback: (String,String)->Unit)
+    suspend fun create(callback: AgoraAudioCallback)
     suspend fun joinChannel()
-    suspend fun leaveChannel()
+    fun leaveChannel()
     fun destroy()
+    fun mute(yes: Boolean)
+    fun muteLocal(yes: Boolean)
+    fun muteRemote(yes: Boolean)
 }

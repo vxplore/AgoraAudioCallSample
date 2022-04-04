@@ -2,10 +2,11 @@ package com.vxplore.agoraaudiocall
 
 import android.content.Context
 import android.util.Log
+import com.vxplore.agoraaudiocall.model.MeetTimings
 import com.vxplore.agoraaudiocall.tokener.Tokener
-import io.agora.rtc.Constants
-import io.agora.rtc.IRtcEngineEventHandler
-import io.agora.rtc.RtcEngine
+import io.agora.rtc.*
+import io.agora.rtc.audio.AudioParams
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 class AgoraAudioCallImpl @Inject constructor(
@@ -13,7 +14,11 @@ class AgoraAudioCallImpl @Inject constructor(
     private val tokener: Tokener,
     private val application: Context
 ): AgoraAudioCall {
-    private var callback: ((String,String)->Unit)? = null
+    var elapsed = -1
+    var totalAllowedSeconds: Int = 0
+    var meetTimings: MeetTimings? = null
+    var timerJob: Job? = null
+    private var callback: AgoraAudioCallback? = null
     private var mRtcEngine: RtcEngine? = null
     private val mRtcEventHandler: IRtcEngineEventHandler = object: IRtcEngineEventHandler() {
         override fun onError(err: Int) {
@@ -23,7 +28,9 @@ class AgoraAudioCallImpl @Inject constructor(
 
         override fun onJoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
             super.onJoinChannelSuccess(channel, uid, elapsed)
-            onEvent("jflflfsdjff","Channel Joined")
+            onEvent("jflflfsdjff","Channel Joined=$uid,$elapsed")
+            callback?.onJoinChannel()
+            startTimer()
         }
 
         override fun onRejoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
@@ -106,7 +113,7 @@ class AgoraAudioCallImpl @Inject constructor(
 
         override fun onUserMuteAudio(uid: Int, muted: Boolean) {
             super.onUserMuteAudio(uid, muted)
-            onEvent("jflflfsdjff","onUserMuteAudio=$uid,$muted")
+            onEvent("jflflfsdjff_mute","onUserMuteAudio=$uid,$muted")
         }
 
         override fun onRemoteAudioStateChanged(uid: Int, state: Int, reason: Int, elapsed: Int) {
@@ -174,6 +181,8 @@ class AgoraAudioCallImpl @Inject constructor(
 
         override fun onRtcStats(stats: RtcStats?) {
             super.onRtcStats(stats)
+            stats?.totalDuration
+            Log.d("rtcStats",stats?.totalDuration?.toString()?:"null")
         }
 
         override fun onLastmileQuality(quality: Int) {
@@ -188,7 +197,7 @@ class AgoraAudioCallImpl @Inject constructor(
 
         override fun onLocalAudioStats(stats: LocalAudioStats?) {
             super.onLocalAudioStats(stats)
-            onEvent("jflflfsdjff","onLocalAudioStats=$stats")
+            onEvent("jflflfsdjff_audio","onLocalAudioStats=${stats?.sentBitrate}")
         }
 
         override fun onRemoteAudioStats(stats: RemoteAudioStats?) {
@@ -220,7 +229,7 @@ class AgoraAudioCallImpl @Inject constructor(
 
         override fun onLocalAudioStateChanged(state: Int, error: Int) {
             super.onLocalAudioStateChanged(state, error)
-            onEvent("jflflfsdjff","onAudioEffectFinished=$state,$error")
+            onEvent("jflflfsdjff_audio_stream","onAudioEffectFinished=$state,$error")
         }
 
         override fun onRequestAudioFileInfo(info: AudioFileInfo?, error: Int) {
@@ -271,17 +280,34 @@ class AgoraAudioCallImpl @Inject constructor(
         }
     }
 
-    private fun onEvent(s: String, s1: String) {
-        Log.d(s,s1)
-        callback?.invoke(s,s1)
+    private fun startTimer() {
+        timerJob = CoroutineScope(Dispatchers.IO).launch{
+            while (true){
+                tick()
+                delay(1000)
+            }
+        }
     }
 
-    override suspend fun create(callback: (String,String)->Unit){
+    private fun tick(){
+        ++elapsed
+        val left = totalAllowedSeconds - elapsed
+        callback?.onTick(elapsed,left,totalAllowedSeconds)
+    }
+
+    private fun onEvent(s: String, s1: String) {
+        Log.d(s,s1)
+        //callback?(s,s1)
+    }
+
+    override suspend fun create(callback: AgoraAudioCallback){
         this.callback = callback
         initializeEngine(application)
     }
 
     override suspend fun joinChannel(){
+        meetTimings = credential.meetTimings()
+        totalAllowedSeconds = ((meetTimings?.timeSpanMillis?:0)/1000).toInt()
         val token = tokener.new()
         mRtcEngine?.enableAudioVolumeIndication(2000,3,true)
         mRtcEngine?.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION)
@@ -290,7 +316,7 @@ class AgoraAudioCallImpl @Inject constructor(
         onEvent("jflflfsdjff","channel join = $s")
     }
 
-    override suspend fun leaveChannel() {
+    override fun leaveChannel() {
         mRtcEngine?.leaveChannel()
     }
 
@@ -307,6 +333,26 @@ class AgoraAudioCallImpl @Inject constructor(
     override fun destroy(){
         RtcEngine.destroy()
         mRtcEngine = null
+        timerJob?.cancel()
+        timerJob = null
+        CallBox.destroy()
+    }
+
+    override fun mute(yes: Boolean) {
+        if(yes){
+            mRtcEngine?.disableAudio()
+        }
+        else{
+            mRtcEngine?.enableAudio()
+        }
+    }
+
+    override fun muteLocal(yes: Boolean) {
+        val success = mRtcEngine?.muteLocalAudioStream(yes)
+    }
+
+    override fun muteRemote(yes: Boolean) {
+        mRtcEngine?.muteRemoteAudioStream(credential.peerUid,yes)
     }
 
     /////////////////////////////////////////////////////////

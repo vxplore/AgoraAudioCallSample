@@ -31,5 +31,11 @@ class CallBox {
         fun getChannelId(): String {
             return this.channelId
         }
+
+        fun destroy(){
+            this.userId = ""
+            this.peerId = ""
+            this.channelId = ""
+        }
     }
 }

@@ -16,6 +16,16 @@ class CredentialMockImpl: Credential {
                 1
             }
         }
+    override val peerUid: Int
+        get(){
+            val userId = CallBox.getUserId()
+            val peerId = CallBox.getPeerId()
+            return if(userId>peerId){
+                1
+            } else{
+                2
+            }
+        }
 
     override suspend fun getChannelId(): String {
         return CallBox.getChannelId()

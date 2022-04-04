@@ -91,4 +91,7 @@ dependencies {
     //jodat time
     implementation 'net.danlew:android.joda:2.10.12.2'
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
+
+    //extended material icons
+    implementation "androidx.compose.material:material-icons-extended:$compose_version"
 }
