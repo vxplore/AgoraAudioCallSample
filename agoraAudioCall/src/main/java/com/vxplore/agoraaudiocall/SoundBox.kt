@@ -8,6 +8,12 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 
 class SoundBox {
+    companion object{
+        private var instance: SoundBox? = null
+        fun play(id: Int){
+            instance?.play(id)
+        }
+    }
     private var soundsIds = mutableMapOf<Int,Int>()
     private var soundPool: SoundPool? = null
     private var volume = 0f
@@ -37,7 +43,8 @@ class SoundBox {
         soundIds.forEach {
             val id = soundPool!!.load(context, it, 1)
             this.soundsIds[it] = id
-        }        
+        }
+        instance = this
     }
     fun play(id: Int){
         if (loaded) {
@@ -49,5 +56,6 @@ class SoundBox {
     fun destroy(){
         audioManager = null
         soundsIds.clear()
+        instance = null
     }
 }
