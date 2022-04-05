@@ -2,9 +2,12 @@ package com.vxplore.agoraaudiocall
 
 import com.vxplore.agoraaudiocall.model.AgoraAppCredential
 import com.vxplore.agoraaudiocall.model.MeetTimings
+import javax.inject.Inject
 import javax.security.auth.callback.Callback
 
-class CredentialMockImpl: Credential {
+class CredentialImpl @Inject constructor(
+    private val metar: Metar
+): Credential {
 
     override val userUid: Int
         get(){
@@ -33,15 +36,15 @@ class CredentialMockImpl: Credential {
 
     override suspend fun meetTimings(): MeetTimings {
         return MeetTimings(
-            startTimeMillis = System.currentTimeMillis(),
-            timeSpanMillis = 15*60*1000
+            startTimeMillis = CallBox.getStartTime(),
+            timeSpanMillis = CallBox.getTotalTime()
         )
     }
 
     override suspend fun getAgoraAppCredential(): AgoraAppCredential {
         return AgoraAppCredential(
-            appId = "13622905826d46538beb9bd1d96c83b1",
-            appCertificate = "a7138949c72440cd81607fc3edcb3f01"
+            appId = metar[Constants.APP_ID_KEY],
+            appCertificate = metar[Constants.APP_CERTIFICATE_KEY]
         )
     }
 }

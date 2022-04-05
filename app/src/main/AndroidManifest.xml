@@ -21,6 +21,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="appId"
+            android:value="13622905826d46538beb9bd1d96c83b1"
+            />
+        <meta-data
+            android:name="appCertificate"
+            android:value="a7138949c72440cd81607fc3edcb3f01"
+            />
     </application>
 
 </manifest>

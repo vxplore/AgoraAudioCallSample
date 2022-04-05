@@ -28,7 +28,9 @@ class MainActivity : ComponentActivity() {
                                 "client",
                                 "doctor",
                                 "client_doctor",
-                                this@MainActivity
+                                this@MainActivity,
+                                System.currentTimeMillis(),
+                                15*60*1000
                             )
                         }) {
                             Text("As Client")
@@ -39,7 +41,9 @@ class MainActivity : ComponentActivity() {
                                 "doctor",
                                 "client",
                                 "client_doctor",
-                                this@MainActivity
+                                this@MainActivity,
+                                System.currentTimeMillis(),
+                                15*60*1000
                             )
                         }) {
                             Text("As Doctory")

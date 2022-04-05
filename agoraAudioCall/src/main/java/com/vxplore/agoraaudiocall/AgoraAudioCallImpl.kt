@@ -5,8 +5,9 @@ import android.util.Log
 import com.vxplore.agoraaudiocall.model.MeetTimings
 import com.vxplore.agoraaudiocall.tokener.Tokener
 import io.agora.rtc.*
-import io.agora.rtc.Constants.CONNECTION_CHANGED_TOKEN_EXPIRED
+import io.agora.rtc.Constants.*
 import io.agora.rtc.audio.AudioParams
+import io.agora.rtc.models.DataStreamConfig
 import kotlinx.coroutines.*
 import java.nio.ByteBuffer
 import javax.inject.Inject
@@ -50,12 +51,14 @@ class AgoraAudioCallImpl @Inject constructor(
 
         override fun onUserJoined(uid: Int, elapsed: Int) {
             super.onUserJoined(uid, elapsed)
-            onEvent("jflflfsdjff","onUserJoined=$uid,$elapsed")
+            onEvent("jflflfsdjff_join","onUserJoined=$uid,$elapsed")
+            onUserJoin(uid,true)
         }
 
         override fun onUserOffline(uid: Int, reason: Int) {
             super.onUserOffline(uid, reason)
-            onEvent("jflflfsdjff","onUserOffline=$uid,$reason")
+            onEvent("jflflfsdjff_join","onUserOffline=$uid,$reason")
+            onUserJoin(uid,false)
         }
 
         override fun onConnectionStateChanged(state: Int, reason: Int) {
@@ -262,7 +265,7 @@ class AgoraAudioCallImpl @Inject constructor(
 
         override fun onStreamMessage(uid: Int, streamId: Int, data: ByteArray?) {
             super.onStreamMessage(uid, streamId, data)
-            onEvent("jflflfsdjff","onStreamMessage=$uid,$streamId,$data")
+            onEvent("jflflfsdjff_message","onStreamMessage=$uid,$streamId,$data")
         }
 
         override fun onStreamMessageError(
@@ -290,6 +293,10 @@ class AgoraAudioCallImpl @Inject constructor(
             super.onNetworkTypeChanged(type)
             onEvent("jflflfsdjff","onNetworkTypeChanged=$type")
         }
+    }
+
+    private fun onUserJoin(uid: Int, online: Boolean) {
+        callback?.onUserJoinStatus(uid,online)
     }
 
     private fun onTokenExpired() {
@@ -332,10 +339,10 @@ class AgoraAudioCallImpl @Inject constructor(
         totalAllowedSeconds = ((meetTimings?.timeSpanMillis?:0)/1000).toInt()
         val token = tokener.new()
         mRtcEngine?.enableAudioVolumeIndication(2000,3,true)
-        mRtcEngine?.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION)
+        mRtcEngine?.setChannelProfile(CHANNEL_PROFILE_COMMUNICATION)
         val channelId = credential.getChannelId()
         val s = mRtcEngine?.joinChannel(token, channelId, null, credential.userUid)
-        onEvent("jflflfsdjff","channel join = $s")
+        onEvent("jflflfsdjff_join","channel join = $s")
     }
 
     private fun registerRecording() {
@@ -390,7 +397,7 @@ class AgoraAudioCallImpl @Inject constructor(
                 return AudioParams(
                     SAMPLE_RATE,
                     SAMPLE_NUM_OF_CHANNEL,
-                    Constants.RAW_AUDIO_FRAME_OP_MODE_READ_WRITE,
+                    RAW_AUDIO_FRAME_OP_MODE_READ_WRITE,
                     SAMPLES_PER_CALL
                 )
             }
@@ -399,7 +406,7 @@ class AgoraAudioCallImpl @Inject constructor(
                 return AudioParams(
                     SAMPLE_RATE,
                     SAMPLE_NUM_OF_CHANNEL,
-                    Constants.RAW_AUDIO_FRAME_OP_MODE_READ_ONLY,
+                    RAW_AUDIO_FRAME_OP_MODE_READ_ONLY,
                     SAMPLES_PER_CALL
                 )
             }
@@ -408,7 +415,7 @@ class AgoraAudioCallImpl @Inject constructor(
                 return AudioParams(
                     SAMPLE_RATE,
                     SAMPLE_NUM_OF_CHANNEL,
-                    Constants.RAW_AUDIO_FRAME_OP_MODE_READ_ONLY,
+                    RAW_AUDIO_FRAME_OP_MODE_READ_ONLY,
                     SAMPLES_PER_CALL
                 )
             }

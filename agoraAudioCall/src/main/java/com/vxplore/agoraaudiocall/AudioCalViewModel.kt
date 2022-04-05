@@ -16,7 +16,11 @@ import javax.inject.Inject
 class AudioCalViewModel @Inject constructor(
     private val routeNavigator: RouteNavigator,
     private val agoraAudioCall: AgoraAudioCall,
+    private val credential: Credential
 ) : LifeCycleAwareDelegate, ViewModel(), RouteNavigator by routeNavigator {
+
+    private val _peerOnline = mutableStateOf(false)
+    val peerOnline: State<Boolean> = _peerOnline
 
     private val _remoteAudio = mutableStateOf(true)
     val remoteAudio: State<Boolean> = _remoteAudio
@@ -105,6 +109,12 @@ class AudioCalViewModel @Inject constructor(
 
                 override fun onRemoteAudioMute(muted: Boolean) {
                     _remoteAudio.value = !muted
+                }
+
+                override fun onUserJoinStatus(uid: Int, online: Boolean) {
+                    if(uid==credential.peerUid){
+                        _peerOnline.value = online
+                    }
                 }
             })
             agoraAudioCall.joinChannel()

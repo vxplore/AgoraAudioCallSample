@@ -12,17 +12,18 @@ import androidx.compose.ui.unit.dp
 import com.vxplore.agoraaudiocall.AudioCalViewModel
 
 @Composable
-fun UserControls(viewModel: AudioCalViewModel) {
-    Row(
-        modifier = Modifier.wrapContentWidth().padding(24.dp)
-    ){
-        CallEndControl(viewModel)
-        ToggleLocalAudioControl(viewModel)
-        ToggleRemoteAudioControl(viewModel)
+fun ToggleRemoteAudioControl(viewModel: AudioCalViewModel) {
+    FloatingActionButton(
+        modifier = Modifier.padding(horizontal = 4.dp),
+        onClick = {
+            viewModel.toggleRemoteAudio()
+        },
+        backgroundColor = Color.White
+    ) {
+        Icon(
+            imageVector = if(viewModel.remoteAudioState.value) Icons.Filled.VolumeUp else Icons.Filled.VolumeMute,
+            contentDescription = "Toggle Remote Audio",
+            tint = Color.Black
+        )
     }
 }
-
-
-
-
-

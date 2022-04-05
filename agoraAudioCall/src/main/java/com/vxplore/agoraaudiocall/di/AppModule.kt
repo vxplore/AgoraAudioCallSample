@@ -4,7 +4,6 @@ import android.content.Context
 import com.hellomydoc.videocall.navigation.MyRouteNavigator
 import com.hellomydoc.videocall.navigation.RouteNavigator
 import com.vxplore.agoraaudiocall.*
-import com.vxplore.agoraaudiocall.tokener.StaticTokenerImpl
 import com.vxplore.agoraaudiocall.tokener.Tokener
 import com.vxplore.agoraaudiocall.tokener.TokenerImpl
 import dagger.Module
@@ -21,8 +20,8 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
-    fun provideCredential(): Credential {
-        return CredentialMockImpl()
+    fun provideCredential(metar: Metar): Credential {
+        return CredentialImpl(metar)
     }
 
     @Provides

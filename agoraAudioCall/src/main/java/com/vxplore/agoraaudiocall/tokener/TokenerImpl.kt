@@ -35,7 +35,8 @@ class TokenerImpl @Inject constructor(
                 channelId,
                 uid,
                 RtcTokenBuilder.Role.Role_Publisher,
-                timestamp)
+                timestamp
+            )
         return token
     }
 

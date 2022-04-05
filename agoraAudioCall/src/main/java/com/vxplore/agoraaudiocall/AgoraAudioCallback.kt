@@ -7,4 +7,5 @@ interface AgoraAudioCallback{
     fun onTokenExpired()
     fun onSamples(arr: ByteArray)
     fun onRemoteAudioMute(muted: Boolean)
+    fun onUserJoinStatus(uid: Int, online: Boolean)
 }
